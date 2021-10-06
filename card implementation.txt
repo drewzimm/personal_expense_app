@@ -1,0 +1,55 @@
+ return Card(
+                  child: Row(
+                    children: [
+                      Container(
+                        // container for price
+                        margin: EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 15,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color:
+                                Theme.of(context).primaryColor, //Colors.purple,
+                            width: 2,
+                          ),
+                        ),
+                        padding: EdgeInsets.all(10),
+                        child: Text(
+                          // price text
+                          '\$${transactions[index].amount.toStringAsFixed(2)}',
+                          // toStringAsFixed fixes how many decimals are displayed
+                          // string interpolation
+                          //  vs. '\$ + transactions[index].amount',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color:
+                                Theme.of(context).primaryColor, //Colors.purple,
+                          ),
+                          //style: ,
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            // title text
+                            transactions[index].title,
+                            //textAlign: TextAlign.right, not need since
+                            //we used crossaxisalignment to align the whole column
+                            //to the left
+                            style: Theme.of(context).textTheme.headline6,
+                          ),
+                          Text(
+                            // date text
+                            DateFormat.yMMMd().format(transactions[index].date),
+                            style: TextStyle(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                );
