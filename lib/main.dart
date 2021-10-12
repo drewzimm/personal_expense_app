@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -122,17 +123,30 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final isLandscape = mediaQuery.orientation == Orientation.landscape;
-    final appBar = AppBar(
-      title: Text(
-        'Personal Expenses',
-      ),
-      actions: [
-        IconButton(
-          onPressed: () => _startAddNewTransaction(context),
-          icon: Icon(Icons.add),
-        ),
-      ],
-    );
+    final PreferredSizeWidget appBar = Platform.isIOS
+        ? CupertinoNavigationBar(
+            middle: Text('Personal Expense'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                  child: Icon(CupertinoIcons.car),
+                  onTap: () => _startAddNewTransaction(context),
+                )
+              ],
+            ),
+          )
+        : AppBar(
+            title: Text(
+              'Personal Expenses',
+            ),
+            actions: [
+              IconButton(
+                onPressed: () => _startAddNewTransaction(context),
+                icon: Icon(Icons.add),
+              ),
+            ],
+          );
     // entire transaction list widget so we can reference it multiple times
     final txListWidget = Container(
       height: (mediaQuery.size.height -
@@ -141,10 +155,8 @@ class _MyHomePageState extends State<MyHomePage> {
           0.7,
       child: TransactionList(_userTransactions, _deleteTransaction),
     );
-
-    return Scaffold(
-      appBar: appBar,
-      body: SingleChildScrollView(
+    final pageBody = SafeArea(
+      child: SingleChildScrollView(
         child: Column(
           // mainAxisAlignment: MainAxisAlignment.start, dont need this as it's
           // the default
@@ -154,7 +166,10 @@ class _MyHomePageState extends State<MyHomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Show Chart'),
+                  Text(
+                    'Show Chart',
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
                   Switch.adaptive(
                     activeColor: Theme.of(context).accentColor,
                     value: _showChart,
@@ -188,14 +203,25 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      // put an add button on the bottom of the screen
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Platform.isIOS
-          ? Container()
-          : FloatingActionButton(
-              child: Icon(Icons.add),
-              onPressed: () => _startAddNewTransaction(context),
-            ),
     );
+
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            child: pageBody,
+            navigationBar: appBar,
+          )
+        : Scaffold(
+            appBar: appBar,
+            body: pageBody,
+            // put an add button on the bottom of the screen
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: Platform.isIOS
+                ? Container()
+                : FloatingActionButton(
+                    child: Icon(Icons.add),
+                    onPressed: () => _startAddNewTransaction(context),
+                  ),
+          );
   }
 }
